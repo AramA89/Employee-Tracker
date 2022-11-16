@@ -33,6 +33,6 @@ VALUES
     ('Nick Dames', 7, null),
     ('George Jungle', 8, 6),
     ('Aaron Andrews', 8, 6),
-    ('Jeff Howard', 9, 7),
+    ('Jeff Howard', 9, 7);
 
 

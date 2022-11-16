@@ -1,17 +1,19 @@
 const inquirer = require('inquirer');
 const mysql = require('mysql');
+const consoleTable = require('console.table');
 
 const connection = mysql.createConnection({
     host: 'localhost',
-    port: 3002,
     user: 'root',
+    port: 3306,
     database: 'employee_db',
-    password: ''
-});
+    password: 'aram',
+},
+    console.log(`Connected to employee_db`)
+);
 
 connection.connect(function(err) {
     if(err) throw err;
-    console.log('Connection Successful!');
     employeeView();
 });
 
@@ -132,8 +134,8 @@ const addEmployee = () => {
         },
     ])
     .then(response => {
-        connection.query('INSERT INTO employee SET',
-        {fullName: response.fullName,
+        connection.query('INSERT INTO employee SET ?',
+        {full_name: response.fullName,
         role_id: parseInt(response.roleId)},
         (err, res) => {
             if(err) {
@@ -186,13 +188,13 @@ const updateEmployee = () => {
             },
         ])
         .then(response => {
-            let updatedEmployeeRole = parseInt(response.employeeId);
+            let updatedEmployee = parseInt(response.employeeId);
             let updatedRoleId = parseInt(response.updatedRoleId);
-            connection.query(`UPDATE employee SET role_id = ${updatedRoleId} WHERE id = ${updatedEmployeeRole}`,
+            connection.query(`UPDATE employee SET role_id = ${updatedRoleId} WHERE id = ${updatedEmployee}`,
             (err, res) => {
                 if(err) {
                     console.log('Error');
-                    updatedEmployeeRole();
+                    updatedEmployee();
                     return;
                 }
                 console.log(`Successfully Updated Role`);
