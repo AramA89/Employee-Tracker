@@ -26,5 +26,8 @@ so that I can organize and plan my business.
 
 ## Video Walkthrough
 
+https://arama89.github.io/Employee-Tracker/
 
 ## GitHub Repository
+
+https://github.com/AramA89/Employee-Tracker
