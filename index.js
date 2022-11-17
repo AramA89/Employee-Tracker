@@ -1,6 +1,6 @@
 const inquirer = require('inquirer');
 const mysql = require('mysql');
-const consoleTable = require('console.table');
+// const consoleTable = require('console.table').default;
 
 const connection = mysql.createConnection({
     host: 'localhost',
@@ -79,7 +79,7 @@ const addDepartment = () => {
         },
     })
     .then(response => {
-        connection.query('INSERT INTO department SET',
+        connection.query(`INSERT INTO department SET ?`,
         {name: response.newDepartment},
         (err, res) => {
             if(err) throw err;
@@ -106,11 +106,11 @@ const addRole = () => {
 },
 ])
 .then(response => {
-    connection.query('ISERT INTO roles SET',
+    connection.query(`INSERT INTO roles SET ?`,
     {
         title: response.roleTitle,
         salary: parseInt(response.roleSalary),
-        departmentId: parseInt(response.departmentId)
+        department_id: parseInt(response.departmentId)
     },
     (err, res) => {
         if(err) throw err;
@@ -134,7 +134,7 @@ const addEmployee = () => {
         },
     ])
     .then(response => {
-        connection.query('INSERT INTO employee SET ?',
+        connection.query(`INSERT INTO employee SET ?`,
         {full_name: response.fullName,
         role_id: parseInt(response.roleId)},
         (err, res) => {
@@ -151,13 +151,23 @@ const addEmployee = () => {
 
 const viewDepartments = () => {
     connection.query(`SELECT * FROM department`, (err, res) => {
-        if(err) throw err; console.table(res); employeeView();
+        if(err) throw err; 
+        console.table(res); 
+        employeeView();
     });
 };
 
 const viewRoles = () => {
+    connection.query(`SELECT * FROM roles`, (err, res) => {
+        if(err) throw err;
+        console.table(res);
+        employeeView();
+    });
+};
+
+const viewEmployees = () => {
     connection.query (`SELECT distinct (e.id),
-    CONCAT (e.full_Name) AS employee_name,
+    CONCAT (e.full_name) AS employee_name,
     r.title as role_title,
     d.name,
     r.salary,
@@ -172,7 +182,7 @@ const viewRoles = () => {
 };
 
 const updateEmployee = () => {
-    connection.query(`SELECT id, full_Name, FROM employee`,
+    connection.query(`SELECT id, full_name FROM employee`,
     (err, res) => {
         if(err) throw err;
         inquirer.prompt ([
@@ -194,7 +204,7 @@ const updateEmployee = () => {
             (err, res) => {
                 if(err) {
                     console.log('Error');
-                    updatedEmployee();
+                    updateEmployee();
                     return;
                 }
                 console.log(`Successfully Updated Role`);
@@ -206,7 +216,7 @@ const updateEmployee = () => {
 
 const deleteEmployee = () => {
     let employees = [];
-    connection.query(`SELECT id, full_name, FROM employee`,
+    connection.query(`SELECT id, full_name FROM employee`,
     (err, res) => {
         res.forEach(element => {
             employees.push(`${element.id} ${element.full_name}`);
@@ -218,7 +228,7 @@ const deleteEmployee = () => {
             choices: employees
         })
         .then(response => {
-            let deletedEmployeeId = parseInt(response.deleteEmployee)
+            let deletedEmployeeId = parseInt(response.deletedEmployee)
             connection.query(`DELETE FROM employee WHERE id = ${deletedEmployeeId}`,
             (err, res) => {
                 console.table(response);
